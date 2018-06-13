@@ -1,23 +1,17 @@
 {
   "manifest_version": 2,
 
-  "name": "Chrome Extension TypeScript Starter",
-  "description": "Chrome Extension, TypeScript, Visual Studio Code",
+  "name": "Baraholka search optimizer",
+  "description": "Baraholka search optimizer",
   "version": "1.0",
 
-  "options_ui": {
-    "page": "options.html",
-    "chrome_style": true
-  },
-
   "browser_action": {
-    "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
 
   "content_scripts": [
       {
-          "matches": ["<all_urls>"],
+          "matches": ["https://baraholka.onliner.by/*"],
           "js": ["js/vendor.js", "js/content_script.js"]
       }
   ],
@@ -28,6 +22,6 @@
 
   "permissions": [
     "storage",
-    "<all_urls>"
+    "https://baraholka.onliner.by/*"
   ]
 }

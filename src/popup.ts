@@ -4,10 +4,27 @@ const form = document.getElementById('form');
 const start = <HTMLInputElement>document.getElementById('start-price');
 const end = <HTMLInputElement>document.getElementById('end-price');
 
+sendMsg({
+  name: 'get-init-state'
+}, state => {
+  if (state) {
+    start.value = state.start;
+    end.value = state.end;
+  }
+})
+
 form.addEventListener('submit', e => {
   e.preventDefault();
   sendMsg(generateConditions());
 });
+
+console.log('activated!');
+
+function sendMsg(msg, callback?) {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, msg, callback);
+  });
+}
 
 function generateConditions() {
   return {
@@ -18,8 +35,7 @@ function generateConditions() {
   }
 }
 
-function sendMsg(msg) {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, msg);
-  });
+export interface PopupState {
+  start: number;
+  end: number;
 }

@@ -1,4 +1,5 @@
 import { RxHR } from '@akanass/rx-http-request/browser/index.js';
+import { PopupState } from './popup';
 
 let pageNum = 0;
 let pageSize = 50;
@@ -10,38 +11,58 @@ const table = getTable(document.body);
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   console.log(msg);
   if (msg.name === 'search-params') {
-    minPrice = msg.start;
-    maxPrice = msg.end;
-    pageNum = 0;
-    clearTable();
-    loadMore();
+
+    localStorage.setItem('msg', JSON.stringify(msg));
+    showActualContent(msg);
+
+  } else if (msg.name === 'get-init-state') {
+
+    if (localStorage.msg) {
+      let state: PopupState = JSON.parse(localStorage.msg);
+      showActualContent(state);
+
+      sendResponse({
+        start: state.start,
+        end: state.end,
+      });
+    } else {
+      sendResponse(null);
+    }
+    
   }
 });
 
 
+function showActualContent(state: PopupState) {
+  minPrice = state.start;
+  maxPrice = state.end;
+  pageNum = 0;
+  clearTable();
+  loadMore();
+}
 
 function loadMore() {
   // TODO: better handle query params.
   RxHR.get(location.href + '&start=' + (pageNum++) * pageSize).subscribe(resp => {
     const el = getElemFromResponse(resp.body);
     const responseTable = getTable(el);
-    const filteredRows = filterTableRows(responseTable);
+    const parsedRows = filterTableRows(responseTable);
 
-    filteredRows
+    parsedRows
       .filter(row => priceFilter(row, minPrice, maxPrice))
       .forEach(row => {
         table.tBodies[0].appendChild(row);
       });
 
-    if (filteredRows.length) {
+    if (parsedRows.length) { // empty page => last page
       loadMore();
     }
   });
 }
 
 function clearTable() {
-  while (table.rows.length) {
-    table.deleteRow(0);
+  while (table.rows.length > 1) {
+    table.deleteRow(1);
   }
 }
 

@@ -1,21 +1,28 @@
 <template>
-  <div id="app">Hello World!</div>
+  <div id="app">
+    <p>{{searchItem}}</p>
+    <input placeholder="Enter your search items" v-model="searchItem" />
+    <button @click="sendToConsole">SEARCH</button>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 
-@Component({})
-export default class App extends Vue {}
+export default {
+  name: "app",
+  data() {
+    return {
+      searchItem: ''
+    };
+  },
+  methods:{
+    sendToConsole(){
+      console.log('SEARCH')
+    }
+  }
+};
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 </style>

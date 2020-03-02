@@ -15,7 +15,11 @@ export default class App extends Vue {
     const url = new URL(location.href);
     url.searchParams.set("q", this.searchItem);
     console.log(url);
-    location.href = url.href;
+    //const response = await fetch(`${url}`);
+    //const htmlPage = await response.text();
+    const htmlPage = fetch(`${url}`)
+      .then(response => response.text())
+      .then(htmlText => console.log(htmlText));
   }
 }
 </script>

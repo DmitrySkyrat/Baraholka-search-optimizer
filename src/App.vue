@@ -2,26 +2,22 @@
   <div id="app">
     <p>{{searchItem}}</p>
     <input placeholder="Enter your search items" v-model="searchItem" />
-    <button @click="sendToConsole">SEARCH</button>
+    <button @click="onSearchButtonClick">SEARCH</button>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-
-export default {
-  name: "app",
-  data() {
-    return {
-      searchItem: ''
-    };
-  },
-  methods:{
-    sendToConsole(){
-      console.log('SEARCH')
-    }
+@Component({})
+export default class App extends Vue {
+  searchItem = "";
+  onSearchButtonClick() {
+    const url = new URL(location.href);
+    url.searchParams.set("q", this.searchItem);
+    console.log(url);
+    location.href = url.href;
   }
-};
+}
 </script>
 
 <style lang="scss">

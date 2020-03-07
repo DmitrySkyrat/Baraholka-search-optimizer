@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <p>{{searchItem}}</p>
+    <p>{{ searchItem }}</p>
     <input placeholder="Enter your search items" v-model="searchItem" />
     <button @click="onSearchButtonClick">SEARCH</button>
   </div>
@@ -8,18 +8,34 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { getElemFromResponse, getTable, filterTableRows } from "./helpers";
+
 @Component({})
 export default class App extends Vue {
   searchItem = "";
-  onSearchButtonClick() {
+  async onSearchButtonClick() {
     const url = new URL(location.href);
     url.searchParams.set("q", this.searchItem);
     console.log(url);
-    //const response = await fetch(`${url}`);
-    //const htmlPage = await response.text();
-    const htmlPage = fetch(`${url}`)
+    fetch(url.href)
       .then(response => response.text())
-      .then(htmlText => console.log(htmlText));
+      .then(htmlText => {
+        const el = getElemFromResponse(htmlText);
+        console.log(el);
+        const table = getTable(el);
+        if (table === null) {
+          return;
+        }
+        console.log(table);
+        const parseedArray = filterTableRows(table);
+        console.log(parseedArray);
+      });
+
+    /*(async () => {
+      const response = await fetch(url.href);
+      const htmlPage = await response.text();
+    })();
+    */
   }
 }
 </script>

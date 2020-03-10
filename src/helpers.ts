@@ -1,7 +1,6 @@
 export function getTable(htmlElement: HTMLDivElement) {
   return htmlElement.querySelector<HTMLTableElement>(".ba-tbl-list__table");
 }
-
 export function getElemFromResponse(resp: string) {
   const el = document.createElement("div");
   el.innerHTML = resp;
@@ -13,11 +12,14 @@ export function filterTableRows(table: HTMLTableElement) {
       return row.classList.length === 0;
     })
 }
-export function priceFilter(row: HTMLTableElement, min: number, max: number) {
-  const priceEl = row.querySelector('.price-primary');
-  if (!priceEl) {
+export function hasElement(el: HTMLDivElement) {
+  const nextPageEl = el.querySelector(".page-next");
+  if (!nextPageEl) {
     return false;
   }
-  const price = Number.parseFloat(priceEl.innerHTML);
-  return min <= price && price <= max;
+  return true;
+}
+export function getNewUrl(url: URL, pageNumber: number){
+  url.searchParams.set("start", `${50 * pageNumber}`);
+  return url;
 }

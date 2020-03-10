@@ -27,25 +27,20 @@ export default class App extends Vue {
     this.loadMore(url);
   }
   async loadMore(url: URL) {
-    console.log(url);
     const response = await fetch(url.href);
     const htmlPage = await response.text();
     const el = getElemFromResponse(htmlPage);
-    console.log(el);
     const table = getTable(el);
     
     if (table === null) {
       return;
     }
     const parsedArray = filterTableRows(table);
-    console.log(parsedArray);
     this.fullParsedArray = this.fullParsedArray.concat(parsedArray);
-    console.log(this.fullParsedArray);
     getNewUrl(url, this.pageNumber);
     this.pageNumber++;
 
     if (hasElement(el)) {
-      console.log(this.pageNumber);
       this.loadMore(url);
     }
   }
@@ -54,17 +49,3 @@ export default class App extends Vue {
 
 <style lang="scss">
 </style>
-  /*  fetch(url.href)
-      .then(response => response.text())
-      .then(htmlText => {
-        const el = getElemFromResponse(htmlText);
-        console.log(el);
-        const table = getTable(el);
-        if (table === null) {
-          return;
-        }
-        console.log(table);
-        const parseedArray = filterTableRows(table);
-        console.log(parseedArray);
-      });
-    */

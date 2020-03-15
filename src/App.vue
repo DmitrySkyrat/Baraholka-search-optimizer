@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <p>{{ searchItem }}</p>
+    <p>{{searchItem}}</p>
     <input placeholder="Enter your search items" v-model="searchItem" />
     <button @click="onSearchButtonClick">SEARCH</button>
   </div>

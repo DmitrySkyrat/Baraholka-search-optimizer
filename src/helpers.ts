@@ -12,7 +12,7 @@ export function filterTableRows(table: HTMLTableElement) {
       return row.classList.length === 0;
     })
 }
-export function hasElement(el: HTMLDivElement) {
+export function hasNextPageElem(el: HTMLDivElement) {
   const nextPageEl = el.querySelector(".page-next");
   if (!nextPageEl) {
     return false;

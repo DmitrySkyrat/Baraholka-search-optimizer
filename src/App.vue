@@ -1,8 +1,11 @@
 <template>
   <div id="app">
-    <p>{{searchItem}}</p>
+    <p>{{ searchItem }}</p>
     <input placeholder="Enter your search items" v-model="searchItem" />
     <button @click="onSearchButtonClick">SEARCH</button>
+    <div>
+      <!--<table-row v-for="item in fullParsedArray" v-bind:key="item"></table-row>-->
+    </div>
   </div>
 </template>
 
@@ -12,27 +15,27 @@ import {
   getElemFromResponse,
   getTable,
   filterTableRows,
-  getNewUrl,
   hasNextPageElem
 } from "./helpers";
 
-Vue.component("table-row", {
-  props: ["name"],
-  template: "<li>{{name}}</li>"
-});
+/*Vue.component("table-row", {
+  props: ["item"],
+  template: "<li>{{item}}</li>"
+});*/
 
 @Component({})
 export default class App extends Vue {
   searchItem = "";
-  pageNumber = 1;
   fullParsedArray: HTMLTableRowElement[] = [];
 
-  onSearchButtonClick() {
+  async onSearchButtonClick() {
+    const pageNum = 0;
     const url = new URL(location.href);
     url.searchParams.set("q", this.searchItem);
-    this.loadMore(url);
+    this.loadMore(url, pageNum);
   }
-  async loadMore(url: URL) {
+  async loadMore(url: URL, pageNum: number) {
+    url.searchParams.set("start", `${50 * pageNum}`);
     const response = await fetch(url.href);
     const htmlPage = await response.text();
     const el = getElemFromResponse(htmlPage);
@@ -44,14 +47,11 @@ export default class App extends Vue {
     const parsedArray = filterTableRows(table);
     this.fullParsedArray.splice(0, 0, ...parsedArray);
     console.log(this.fullParsedArray);
-    getNewUrl(url, this.pageNumber);
-    this.pageNumber++;
-
     if (hasNextPageElem(el)) {
-      this.loadMore(url);
+      this.loadMore(url, pageNum + 1);
     }
   }
-}
+} 
 </script>
 
 <style lang="scss">

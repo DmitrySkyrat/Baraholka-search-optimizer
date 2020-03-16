@@ -19,7 +19,3 @@ export function hasNextPageElem(el: HTMLDivElement) {
   }
   return true;
 }
-export function getNewUrl(url: URL, pageNumber: number){
-  url.searchParams.set("start", `${50 * pageNumber}`);
-  return url;
-}

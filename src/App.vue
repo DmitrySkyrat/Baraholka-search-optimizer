@@ -4,13 +4,14 @@
     <input placeholder="Enter your search items" v-model="searchItem" />
     <button @click="onSearchButtonClick">SEARCH</button>
     <div>
-      <!--<table-row v-for="item in fullParsedArray" v-bind:key="item"></table-row>-->
+      <SearchedInfo />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
+import SearchedInfo from "@/components/Searched-info.vue"
 import {
   getElemFromResponse,
   getTable,
@@ -18,13 +19,13 @@ import {
   hasNextPageElem
 } from "./helpers";
 
-/*Vue.component("table-row", {
-  props: ["item"],
-  template: "<li>{{item}}</li>"
-});*/
-
-@Component({})
+@Component({
+    components: {
+    SearchedInfo
+  }
+})
 export default class App extends Vue {
+  @Prop() readonly item!: HTMLTableRowElement;
   searchItem = "";
   fullParsedArray: HTMLTableRowElement[] = [];
 
@@ -51,7 +52,7 @@ export default class App extends Vue {
       this.loadMore(url, pageNum + 1);
     }
   }
-} 
+}
 </script>
 
 <style lang="scss">

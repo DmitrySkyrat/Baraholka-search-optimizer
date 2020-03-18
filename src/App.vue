@@ -1,16 +1,21 @@
 <template>
   <div id="app">
-    <p>{{ searchItem }}</p>
-    <input placeholder="Enter your search items" v-model="searchItem" />
-    <button @click="onSearchButtonClick">SEARCH</button>
     <div>
-      <!--<table-row v-for="item in fullParsedArray" v-bind:key="item"></table-row>-->
+      <p>{{ searchItem }}</p>
+      <input placeholder="Enter your search items" v-model="searchItem" />
+      <button @click="onSearchButtonClick">SEARCH</button>
     </div>
+    <ul>
+      <li v-for="item in fullParsedArray" v-bind:key="item">
+        <SearchedInfo />
+      </li>
+    </ul>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import SearchedInfo from "./components/TableRow.vue";
 import {
   getElemFromResponse,
   getTable,
@@ -18,12 +23,11 @@ import {
   hasNextPageElem
 } from "./helpers";
 
-/*Vue.component("table-row", {
-  props: ["item"],
-  template: "<li>{{item}}</li>"
-});*/
-
-@Component({})
+@Component({
+  components: {
+    SearchedInfo
+  }
+})
 export default class App extends Vue {
   searchItem = "";
   fullParsedArray: HTMLTableRowElement[] = [];
@@ -45,14 +49,13 @@ export default class App extends Vue {
       return;
     }
     const parsedArray = filterTableRows(table);
-    this.fullParsedArray.splice(0, 0, ...parsedArray);
+    this.fullParsedArray.push(...parsedArray);
     console.log(this.fullParsedArray);
     if (hasNextPageElem(el)) {
       this.loadMore(url, pageNum + 1);
     }
   }
-} 
+}
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

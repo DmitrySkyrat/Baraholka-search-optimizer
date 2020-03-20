@@ -5,17 +5,13 @@
       <input placeholder="Enter your search items" v-model="searchItem" />
       <button @click="onSearchButtonClick">SEARCH</button>
     </div>
-    <ul>
-      <li v-for="item in fullParsedArray" v-bind:key="item">
-        <SearchedInfo />
-      </li>
-    </ul>
+    <TableRow v-for="item in fullParsedArray" v-bind:key="item" v-bind:item="item"></TableRow>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import SearchedInfo from "./components/TableRow.vue";
+import { Component, Vue, Prop } from "vue-property-decorator";
+import TableRow from "./components/TableRow.vue";
 import {
   getElemFromResponse,
   getTable,
@@ -25,7 +21,7 @@ import {
 
 @Component({
   components: {
-    SearchedInfo
+    TableRow
   }
 })
 export default class App extends Vue {

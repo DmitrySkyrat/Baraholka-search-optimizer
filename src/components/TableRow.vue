@@ -1,12 +1,13 @@
 <template>
-  <div v-html="item.innerHTML"></div>
+  <tr v-html="topic.el.innerHTML"></tr>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
+import { BaraholkaTopic } from '../models';
 
 @Component({})
 export default class Row extends Vue {
-  @Prop() readonly item!: HTMLTableRowElement;
+  @Prop() readonly topic!: BaraholkaTopic;
 }
 </script>

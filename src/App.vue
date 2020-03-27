@@ -5,7 +5,9 @@
       <input placeholder="Enter your search items" v-model="searchItem" />
       <button @click="onSearchButtonClick">SEARCH</button>
     </div>
-    <TableRow v-for="item in fullParsedArray" v-bind:key="item" v-bind:item="item"></TableRow>
+    <table class="ba-tbl-list__table">
+      <TableRow v-for="topic in fullParsedArray" v-bind:key="topic.id" v-bind:topic="topic"></TableRow>
+    </table>
   </div>
 </template>
 
@@ -16,8 +18,12 @@ import {
   getElemFromResponse,
   getTable,
   filterTableRows,
-  hasNextPageElem
+  hasNextPageElem,
+  hideNativeTable,
+  hideNativePagination,
+  tableRowsToTopics
 } from "./helpers";
+import { BaraholkaTopic } from "./models";
 
 @Component({
   components: {
@@ -26,9 +32,11 @@ import {
 })
 export default class App extends Vue {
   searchItem = "";
-  fullParsedArray: HTMLTableRowElement[] = [];
+  fullParsedArray: BaraholkaTopic[] = [];
 
   async onSearchButtonClick() {
+    hideNativeTable();
+    hideNativePagination();
     const pageNum = 0;
     const url = new URL(location.href);
     url.searchParams.set("q", this.searchItem);
@@ -45,7 +53,8 @@ export default class App extends Vue {
       return;
     }
     const parsedArray = filterTableRows(table);
-    this.fullParsedArray.push(...parsedArray);
+    const newParsedArray = tableRowsToTopics(parsedArray);
+    this.fullParsedArray.push(...newParsedArray);
     console.log(this.fullParsedArray);
     if (hasNextPageElem(el)) {
       this.loadMore(url, pageNum + 1);

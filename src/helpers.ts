@@ -1,3 +1,5 @@
+import { BaraholkaTopic } from "./models";
+
 export function getTable(htmlElement: HTMLDivElement) {
   return htmlElement.querySelector<HTMLTableElement>(".ba-tbl-list__table");
 }
@@ -9,8 +11,8 @@ export function getElemFromResponse(resp: string) {
 export function filterTableRows(table: HTMLTableElement) {
   return Array.from(table.rows)
     .filter(row => {
-      return row.classList.length === 0;
-    })
+    return row.classList.length === 0;
+  });
 }
 export function hasNextPageElem(el: HTMLDivElement) {
   const nextPageEl = el.querySelector(".page-next");
@@ -18,4 +20,43 @@ export function hasNextPageElem(el: HTMLDivElement) {
     return false;
   }
   return true;
+}
+//Hide root elements
+export function hideNativeTable() {
+  const nativeTable = document.querySelector(".ba-tbl-list");
+  nativeTable?.setAttribute("hidden", "true");
+}
+export function hideNativePagination() {
+  const nativePagination = document.querySelectorAll(".b-pages");
+  for (let i = 0; i < nativePagination.length; i++) {
+    nativePagination[i].setAttribute("hidden", "true");
+  }
+}
+export function tableRowsToTopics(parsedArray: HTMLTableRowElement[]): BaraholkaTopic[] {
+  return parsedArray.map(item => {
+    const row: BaraholkaTopic = {
+      id: (() => {
+        const itemId = item.querySelector(".wraptxt");
+        const itemElement = itemId?.getElementsByTagName("a")[0];
+        const itemAttribute = itemElement?.getAttribute("href");
+        if (!itemAttribute) {
+          return null;
+        }
+        return itemAttribute.substr(18);
+      })(),
+      price: (() => {
+        const primaryPrice = item.querySelector(".price-primary");
+        if (!primaryPrice) {
+          return -1;
+        }
+        return parseFloat(primaryPrice.innerHTML);
+      })(),
+      city: (() => {
+        const cityElement = item.querySelector(".ba-signature strong");
+        return cityElement?.innerHTML || '';
+      })(),
+      el: item
+    };
+    return row;
+  });
 }

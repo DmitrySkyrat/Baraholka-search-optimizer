@@ -32,6 +32,7 @@ export function hideNativePagination() {
     nativePagination[i].setAttribute("hidden", "true");
   }
 }
+//Convert Table rows to Topics
 export function tableRowsToTopics(parsedArray: HTMLTableRowElement[]): BaraholkaTopic[] {
   return parsedArray.map(item => {
     const row: BaraholkaTopic = {
@@ -49,7 +50,7 @@ export function tableRowsToTopics(parsedArray: HTMLTableRowElement[]): Baraholka
         if (!primaryPrice) {
           return -1;
         }
-        return parseFloat(primaryPrice.innerHTML);
+        return parseFloat(primaryPrice.innerHTML.replace(/ +/g, ''));
       })(),
       city: (() => {
         const cityElement = item.querySelector(".ba-signature strong");
@@ -59,4 +60,11 @@ export function tableRowsToTopics(parsedArray: HTMLTableRowElement[]): Baraholka
     };
     return row;
   });
+}
+//Filter Topic prices
+export function priceFilter(topicPrice : number, minPrice: number, maxPrice: number) {
+  if ((maxPrice === 0) && (minPrice === 0)) {
+    return null;
+  }
+  return minPrice <= topicPrice && topicPrice <= maxPrice;
 }

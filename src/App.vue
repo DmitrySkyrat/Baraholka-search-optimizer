@@ -4,6 +4,8 @@
       <p>{{ searchItem }}</p>
       <input placeholder="Enter your search items" v-model="searchItem" />
       <button @click="onSearchButtonClick">SEARCH</button>
+      <input v-model.number="minPrice" placeholder="Enter min price" type="number"/>
+      <input v-model.number="maxPrice" placeholder="Enter max price" type="number"/>
     </div>
     <table class="ba-tbl-list__table">
       <TableRow v-for="topic in fullParsedArray" v-bind:key="topic.id" v-bind:topic="topic"></TableRow>
@@ -21,7 +23,8 @@ import {
   hasNextPageElem,
   hideNativeTable,
   hideNativePagination,
-  tableRowsToTopics
+  tableRowsToTopics,
+  priceFilter
 } from "./helpers";
 import { BaraholkaTopic } from "./models";
 
@@ -33,6 +36,8 @@ import { BaraholkaTopic } from "./models";
 export default class App extends Vue {
   searchItem = "";
   fullParsedArray: BaraholkaTopic[] = [];
+  minPrice = "";
+  maxPrice = "";
 
   async onSearchButtonClick() {
     hideNativeTable();
@@ -54,7 +59,10 @@ export default class App extends Vue {
     }
     const parsedArray = filterTableRows(table);
     const newParsedArray = tableRowsToTopics(parsedArray);
-    this.fullParsedArray.push(...newParsedArray);
+    const filteredTopics = newParsedArray.filter(topic =>
+      priceFilter(topic.price, Number(this.minPrice), Number(this.maxPrice))
+    );
+    this.fullParsedArray.push(...filteredTopics);
     console.log(this.fullParsedArray);
     if (hasNextPageElem(el)) {
       this.loadMore(url, pageNum + 1);

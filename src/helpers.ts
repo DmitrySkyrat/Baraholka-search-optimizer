@@ -1,8 +1,9 @@
-import { BaraholkaTopic } from "./models";
+import { BaraholkaTopic, Categories } from "./models";
 
 export function getTable(htmlElement: HTMLDivElement) {
   return htmlElement.querySelector<HTMLTableElement>(".ba-tbl-list__table");
 }
+//Create HTML div element and put string response into it
 export function getElemFromResponse(resp: string) {
   const el = document.createElement("div");
   el.innerHTML = resp;
@@ -31,9 +32,8 @@ export function hideNativePagination() {
     nativePagination[i].setAttribute("hidden", "true");
   }
 }
-export function tableRowsToTopics(
-  parsedArray: HTMLTableRowElement[]
-): BaraholkaTopic[] {
+//Convert Table rows to Topics
+export function tableRowsToTopics(parsedArray: HTMLTableRowElement[]): BaraholkaTopic[] {
   return parsedArray.map(item => {
     const row: BaraholkaTopic = {
       id: (() => {
@@ -72,4 +72,31 @@ export function priceFilter(topicPrice: number, minPrice: number, maxPrice: numb
   }
 
   return true;
+}
+//Create category
+export function parseCategory(categoriesBlock : Element, i:number){
+  const category: Categories = {
+    id: (() => {
+      const categoryElements = categoriesBlock?.getElementsByTagName("a")[
+        i
+      ];
+      const categoryAttribute = categoryElements?.getAttribute("href");
+      if (!categoryAttribute) {
+        return null;
+      }
+      return categoryAttribute.substr(10);
+    })(),
+    name: (() => {
+      const nameSelector = categoriesBlock?.getElementsByTagName("a")[i];
+      return nameSelector?.innerHTML || "";
+    })(),
+    el: (() => {
+      const elElements = categoriesBlock?.getElementsByTagName("a")[i];
+      if (!elElements) {
+        return null;
+      }
+      return elElements;
+    })()
+  };
+  return category;
 }

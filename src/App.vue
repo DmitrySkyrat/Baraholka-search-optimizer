@@ -39,6 +39,7 @@ export default class App extends Vue {
     hideNativePagination();
     const pageNum = 0;
     const url = new URL(location.href);
+    url.pathname = "search.php";
     url.searchParams.set("q", this.searchItem);
     this.loadMore(url, pageNum);
   }

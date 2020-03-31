@@ -9,8 +9,7 @@ export function getElemFromResponse(resp: string) {
   return el;
 }
 export function filterTableRows(table: HTMLTableElement) {
-  return Array.from(table.rows)
-    .filter(row => {
+  return Array.from(table.rows).filter(row => {
     return row.classList.length === 0;
   });
 }
@@ -32,7 +31,9 @@ export function hideNativePagination() {
     nativePagination[i].setAttribute("hidden", "true");
   }
 }
-export function tableRowsToTopics(parsedArray: HTMLTableRowElement[]): BaraholkaTopic[] {
+export function tableRowsToTopics(
+  parsedArray: HTMLTableRowElement[]
+): BaraholkaTopic[] {
   return parsedArray.map(item => {
     const row: BaraholkaTopic = {
       id: (() => {
@@ -53,7 +54,7 @@ export function tableRowsToTopics(parsedArray: HTMLTableRowElement[]): Baraholka
       })(),
       city: (() => {
         const cityElement = item.querySelector(".ba-signature strong");
-        return cityElement?.innerHTML || '';
+        return cityElement?.innerHTML || "";
       })(),
       el: item
     };

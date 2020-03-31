@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { BaraholkaTopic } from '../models';
+import { BaraholkaTopic } from "../models";
 
 @Component({})
 export default class Row extends Vue {

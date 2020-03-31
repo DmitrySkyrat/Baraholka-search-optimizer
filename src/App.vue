@@ -6,13 +6,17 @@
       <button @click="onSearchButtonClick">SEARCH</button>
     </div>
     <table class="ba-tbl-list__table">
-      <TableRow v-for="topic in fullParsedArray" v-bind:key="topic.id" v-bind:topic="topic"></TableRow>
+      <TableRow
+        v-for="topic in fullParsedArray"
+        v-bind:key="topic.id"
+        v-bind:topic="topic"
+      ></TableRow>
     </table>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import TableRow from "./components/TableRow.vue";
 import {
   getElemFromResponse,
@@ -56,7 +60,7 @@ export default class App extends Vue {
     const parsedArray = filterTableRows(table);
     const newParsedArray = tableRowsToTopics(parsedArray);
     this.fullParsedArray.push(...newParsedArray);
-    console.log(this.fullParsedArray);
+
     if (hasNextPageElem(el)) {
       this.loadMore(url, pageNum + 1);
     }

@@ -62,9 +62,14 @@ export function tableRowsToTopics(
   });
 }
 //Filter Topic prices
-export function priceFilter(topicPrice : number, minPrice: number, maxPrice: number) {
-  if ((maxPrice === 0) && (minPrice === 0)) {
-    return null;
+export function priceFilter(topicPrice: number, minPrice: number, maxPrice: number) {
+  if (maxPrice && topicPrice > maxPrice) {
+    return false;
   }
-  return minPrice <= topicPrice && topicPrice <= maxPrice;
+
+  if (minPrice && topicPrice < minPrice) {
+    return false;
+  }
+
+  return true;
 }

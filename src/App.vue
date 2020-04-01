@@ -8,13 +8,17 @@
       <input v-model.number="maxPrice" placeholder="Enter max price" type="number"/>
     </div>
     <table class="ba-tbl-list__table">
-      <TableRow v-for="topic in fullParsedArray" v-bind:key="topic.id" v-bind:topic="topic"></TableRow>
+      <TableRow
+        v-for="topic in fullParsedArray"
+        v-bind:key="topic.id"
+        v-bind:topic="topic"
+      ></TableRow>
     </table>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import TableRow from "./components/TableRow.vue";
 import {
   getElemFromResponse,
@@ -44,6 +48,7 @@ export default class App extends Vue {
     hideNativePagination();
     const pageNum = 0;
     const url = new URL(location.href);
+    url.pathname = "search.php";
     url.searchParams.set("q", this.searchItem);
     this.loadMore(url, pageNum);
   }
@@ -63,7 +68,6 @@ export default class App extends Vue {
       priceFilter(topic.price, Number(this.minPrice), Number(this.maxPrice))
     );
     this.fullParsedArray.push(...filteredTopics);
-    console.log(this.fullParsedArray);
     if (hasNextPageElem(el)) {
       this.loadMore(url, pageNum + 1);
     }

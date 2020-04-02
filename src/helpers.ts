@@ -50,7 +50,7 @@ export function tableRowsToTopics(
         if (!primaryPrice) {
           return -1;
         }
-        return parseFloat(primaryPrice.innerHTML);
+        return parseFloat(primaryPrice.innerHTML.replace(/ +/g, ''));
       })(),
       city: (() => {
         const cityElement = item.querySelector(".ba-signature strong");
@@ -60,4 +60,16 @@ export function tableRowsToTopics(
     };
     return row;
   });
+}
+//Filter Topic prices
+export function priceFilter(topicPrice: number, minPrice: number, maxPrice: number) {
+  if (maxPrice && topicPrice > maxPrice) {
+    return false;
+  }
+
+  if (minPrice && topicPrice < minPrice) {
+    return false;
+  }
+
+  return true;
 }

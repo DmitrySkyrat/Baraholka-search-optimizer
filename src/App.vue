@@ -6,6 +6,14 @@
       <input v-model="maxPrice" placeholder="Enter max price" type="number" />
       <button @click="onSearchButtonClick">SEARCH</button>
     </div>
+    <select onchange="window.location.href=this.options[this.selectedIndex].value">
+      <option
+        v-for="category in baraholkaCategories"
+        v-bind:key="category.id"
+        v-bind:value="category.el"
+        v-html="category.name"
+      ></option>
+    </select>
     <table class="ba-tbl-list__table">
       <TableRow v-for="topic in fullParsedArray" v-bind:key="topic.id" v-bind:topic="topic"></TableRow>
     </table>
@@ -13,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
 import TableRow from "./components/TableRow.vue";
 import {
   getElemFromResponse,
@@ -23,9 +31,10 @@ import {
   hideNativeTable,
   hideNativePagination,
   tableRowsToTopics,
-  priceFilter
+  priceFilter,
+  parseCategory
 } from "./helpers";
-import { BaraholkaTopic } from "./models";
+import { BaraholkaTopic, Categories } from "./models";
 
 @Component({
   components: {
@@ -33,10 +42,24 @@ import { BaraholkaTopic } from "./models";
   }
 })
 export default class App extends Vue {
+  //@Prop() readonly category!: Categories;
   searchItem = "";
   fullParsedArray: BaraholkaTopic[] = [];
+  baraholkaCategories: Categories[] = [];
   minPrice = 0;
   maxPrice = 0;
+
+    mounted() {
+    const categoriesBlock = document.querySelector(".b-ba-tabs");
+    const categoriesArray = categoriesBlock?.getElementsByTagName("li");
+    if (!categoriesArray || !categoriesBlock) {
+      return null;
+    }
+    for (let i = 0; i < categoriesArray.length; i++) {
+      const newCategory = parseCategory(categoriesBlock, i);
+      this.baraholkaCategories.push(newCategory);
+    }
+  }
 
   async onSearchButtonClick() {
     hideNativeTable();

@@ -42,7 +42,6 @@ import { BaraholkaTopic, Categories } from "./models";
   }
 })
 export default class App extends Vue {
-  //@Prop() readonly category!: Categories;
   searchItem = "";
   fullParsedArray: BaraholkaTopic[] = [];
   baraholkaCategories: Categories[] = [];
@@ -62,6 +61,7 @@ export default class App extends Vue {
   }
 
   async onSearchButtonClick() {
+    this.fullParsedArray = [];
     hideNativeTable();
     hideNativePagination();
     const pageNum = 0;

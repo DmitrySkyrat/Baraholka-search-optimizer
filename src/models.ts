@@ -4,8 +4,7 @@ export interface BaraholkaTopic {
   city: string;
   el: HTMLTableRowElement;
 }
-export interface Categories {
-  id: string | null;
+export interface Category {
+  id: string;
   name: string;
-  el: Element | null;
 }

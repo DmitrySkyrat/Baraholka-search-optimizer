@@ -6,13 +6,12 @@
       <input v-model="maxPrice" placeholder="Enter max price" type="number" />
       <button @click="onSearchButtonClick">SEARCH</button>
     </div>
-    <select onchange="window.location.href=this.options[this.selectedIndex].value">
+    <select v-model="selectedCategoryIndex">
       <option
-        v-for="category in baraholkaCategories"
-        v-bind:key="category.id"
-        v-bind:value="category.el"
-        v-html="category.name"
-      ></option>
+        v-for="(category, index) in baraholkaCategories"
+        :key="category.id"
+        :value="index"
+      >{{category.name}}</option>
     </select>
     <table class="ba-tbl-list__table">
       <TableRow v-for="topic in fullParsedArray" v-bind:key="topic.id" v-bind:topic="topic"></TableRow>
@@ -32,9 +31,9 @@ import {
   hideNativePagination,
   tableRowsToTopics,
   priceFilter,
-  parseCategory
+  parseCategories
 } from "./helpers";
-import { BaraholkaTopic, Categories } from "./models";
+import { BaraholkaTopic, Category } from "./models";
 
 @Component({
   components: {
@@ -44,32 +43,38 @@ import { BaraholkaTopic, Categories } from "./models";
 export default class App extends Vue {
   searchItem = "";
   fullParsedArray: BaraholkaTopic[] = [];
-  baraholkaCategories: Categories[] = [];
+  baraholkaCategories: Category[] = [];
+  selectedCategoryIndex = 0;
   minPrice = 0;
   maxPrice = 0;
 
-    mounted() {
+  mounted() {
     const categoriesBlock = document.querySelector(".b-ba-tabs");
-    const categoriesArray = categoriesBlock?.getElementsByTagName("li");
-    if (!categoriesArray || !categoriesBlock) {
-      return null;
+    if (!categoriesBlock) {
+      return;
     }
-    for (let i = 0; i < categoriesArray.length; i++) {
-      const newCategory = parseCategory(categoriesBlock, i);
-      this.baraholkaCategories.push(newCategory);
-    }
+
+    this.baraholkaCategories.push(...parseCategories(categoriesBlock));
   }
 
   async onSearchButtonClick() {
-    this.fullParsedArray = [];
     hideNativeTable();
     hideNativePagination();
+
+    this.fullParsedArray.splice(0);
+
     const pageNum = 0;
     const url = new URL(location.href);
     url.pathname = "search.php";
     url.searchParams.set("q", this.searchItem);
+    url.searchParams.set(
+      "cat",
+      this.baraholkaCategories[this.selectedCategoryIndex].id
+    );
+
     this.loadMore(url, pageNum);
   }
+
   async loadMore(url: URL, pageNum: number) {
     url.searchParams.set("start", `${50 * pageNum}`);
     const response = await fetch(url.href);
@@ -85,7 +90,9 @@ export default class App extends Vue {
     const filteredTopics = newParsedArray.filter(topic =>
       priceFilter(topic.price, this.minPrice, this.maxPrice)
     );
+
     this.fullParsedArray.push(...filteredTopics);
+
     if (hasNextPageElem(el)) {
       this.loadMore(url, pageNum + 1);
     }

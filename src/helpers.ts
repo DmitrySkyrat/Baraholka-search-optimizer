@@ -1,4 +1,4 @@
-import { BaraholkaTopic, Categories } from "./models";
+import { BaraholkaTopic, Category } from "./models";
 
 export function getTable(htmlElement: HTMLDivElement) {
   return htmlElement.querySelector<HTMLTableElement>(".ba-tbl-list__table");
@@ -74,29 +74,18 @@ export function priceFilter(topicPrice: number, minPrice: number, maxPrice: numb
   return true;
 }
 //Create category
-export function parseCategory(categoriesBlock : Element, i:number){
-  const category: Categories = {
-    id: (() => {
-      const categoryElements = categoriesBlock?.getElementsByTagName("a")[
-        i
-      ];
-      const categoryAttribute = categoryElements?.getAttribute("href");
-      if (!categoryAttribute) {
-        return null;
-      }
-      return categoryAttribute.substr(10);
-    })(),
-    name: (() => {
-      const nameSelector = categoriesBlock?.getElementsByTagName("a")[i];
-      return nameSelector?.innerHTML || "";
-    })(),
-    el: (() => {
-      const elElements = categoriesBlock?.getElementsByTagName("a")[i];
-      if (!elElements) {
-        return null;
-      }
-      return elElements;
-    })()
-  };
-  return category;
+export function parseCategories(categoriesBlock: Element) {
+
+  const categoriesArray = Array.from(categoriesBlock?.getElementsByTagName("li"))
+    .map(liElem => liElem.querySelector('a'));
+
+  return categoriesArray
+    .map(categoryElem => {
+      const category: Category = {
+        id: categoryElem?.getAttribute("href")?.substr(10) || '',
+        name: categoryElem?.innerText || '',
+      };
+      return category;
+    })
+
 }

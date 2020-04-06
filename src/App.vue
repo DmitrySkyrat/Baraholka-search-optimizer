@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <div>
+    <form @submit.prevent="onSearchButtonClick">
       <input placeholder="Enter your search items" v-model="searchItem" />
       <input v-model="minPrice" placeholder="Enter min price" type="number" />
       <input v-model="maxPrice" placeholder="Enter max price" type="number" />
-      <button @click="onSearchButtonClick">SEARCH</button>
-    </div>
+      <input type="submit" value="SEARCH">
+    </form>
     <select v-model="selectedCategoryIndex">
       <option
         v-for="(category, index) in baraholkaCategories"

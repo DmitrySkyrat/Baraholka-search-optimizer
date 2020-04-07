@@ -73,17 +73,19 @@ export function priceFilter(topicPrice: number, minPrice: number, maxPrice: numb
 
   return true;
 }
-//Create category
+//Parse categories
 export function parseCategories(categoriesBlock: Element) {
 
   const categoriesArray = Array.from(categoriesBlock?.getElementsByTagName("li"))
-    .map(liElem => liElem.querySelector('a'));
+    .map(liElem => liElem.querySelector('a') as HTMLAnchorElement);
 
   return categoriesArray
     .map(categoryElem => {
+      const id = new URL(categoryElem.href).searchParams.get('cat') || '';
+
       const category: Category = {
-        id: categoryElem?.getAttribute("href")?.substr(10) || '',
-        name: categoryElem?.innerText || '',
+        id,
+        name: categoryElem.innerText || '',
       };
       return category;
     })

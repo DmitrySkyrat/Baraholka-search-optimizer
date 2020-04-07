@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <form @submit.prevent="onSearchButtonClick">
+    <form @submit.prevent="onFormSubmit">
       <input placeholder="Enter your search items" v-model="searchItem" />
       <input v-model="minPrice" placeholder="Enter min price" type="number" />
       <input v-model="maxPrice" placeholder="Enter max price" type="number" />
-      <input type="submit" value="SEARCH">
+      <select v-model="selectedCategoryIndex">
+        <option
+          v-for="(category, index) in baraholkaCategories"
+          :key="category.id"
+          :value="index"
+        >{{category.name}}</option>
+      </select>
+      <input type="submit" value="SEARCH" />
     </form>
-    <select v-model="selectedCategoryIndex">
-      <option
-        v-for="(category, index) in baraholkaCategories"
-        :key="category.id"
-        :value="index"
-      >{{category.name}}</option>
-    </select>
     <table class="ba-tbl-list__table">
       <TableRow v-for="topic in fullParsedArray" v-bind:key="topic.id" v-bind:topic="topic"></TableRow>
     </table>
@@ -44,7 +44,7 @@ export default class App extends Vue {
   searchItem = "";
   fullParsedArray: BaraholkaTopic[] = [];
   baraholkaCategories: Category[] = [];
-  selectedCategoryIndex = 0;
+  selectedCategoryIndex = 1;
   minPrice = 0;
   maxPrice = 0;
 
@@ -57,7 +57,7 @@ export default class App extends Vue {
     this.baraholkaCategories.push(...parseCategories(categoriesBlock));
   }
 
-  async onSearchButtonClick() {
+  async onFormSubmit() {
     hideNativeTable();
     hideNativePagination();
 

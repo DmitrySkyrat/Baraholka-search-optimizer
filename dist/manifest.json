@@ -2,8 +2,8 @@
   "manifest_version": 2,
 
   "name": "Baraholka search optimizer",
-  "description": "Baraholka search optimizer",
-  "version": "2.0",
+  "description": "Позволяет применять филтр по цене на сайте Барахолки baraholka.onliner.by",
+  "version": "2.1",
 
   "content_scripts": [
     {

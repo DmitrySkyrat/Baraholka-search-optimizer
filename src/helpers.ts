@@ -10,7 +10,7 @@ export function getElemFromResponse(resp: string) {
   return el;
 }
 export function filterTableRows(table: HTMLTableElement) {
-  return Array.from(table.rows).filter(row => {
+  return Array.from(table.rows).filter((row) => {
     return row.classList.length === 0;
   });
 }
@@ -33,8 +33,10 @@ export function hideNativePagination() {
   }
 }
 //Convert Table rows to Topics
-export function tableRowsToTopics(parsedArray: HTMLTableRowElement[]): BaraholkaTopic[] {
-  return parsedArray.map(item => {
+export function tableRowsToTopics(
+  parsedArray: HTMLTableRowElement[]
+): BaraholkaTopic[] {
+  return parsedArray.map((item) => {
     const row: BaraholkaTopic = {
       id: (() => {
         const itemId = item.querySelector(".wraptxt");
@@ -50,19 +52,23 @@ export function tableRowsToTopics(parsedArray: HTMLTableRowElement[]): Baraholka
         if (!primaryPrice) {
           return -1;
         }
-        return parseFloat(primaryPrice.innerHTML.replace(/ +/g, ''));
+        return parseFloat(primaryPrice.innerHTML.replace(/ +/g, ""));
       })(),
       city: (() => {
         const cityElement = item.querySelector(".ba-signature strong");
         return cityElement?.innerHTML || "";
       })(),
-      el: item
+      el: item,
     };
     return row;
   });
 }
 //Filter Topic prices
-export function priceFilter(topicPrice: number, minPrice: number, maxPrice: number) {
+export function priceFilter(
+  topicPrice: number,
+  minPrice: number,
+  maxPrice: number
+) {
   if (maxPrice && topicPrice > maxPrice) {
     return false;
   }
@@ -75,19 +81,17 @@ export function priceFilter(topicPrice: number, minPrice: number, maxPrice: numb
 }
 //Parse categories
 export function parseCategories(categoriesBlock: Element) {
+  const categoriesArray = Array.from(
+    categoriesBlock?.getElementsByTagName("li")
+  ).map((liElem) => liElem.querySelector("a") as HTMLAnchorElement);
 
-  const categoriesArray = Array.from(categoriesBlock?.getElementsByTagName("li"))
-    .map(liElem => liElem.querySelector('a') as HTMLAnchorElement);
+  return categoriesArray.map((categoryElem) => {
+    const id = new URL(categoryElem.href).searchParams.get("cat") || "";
 
-  return categoriesArray
-    .map(categoryElem => {
-      const id = new URL(categoryElem.href).searchParams.get('cat') || '';
-
-      const category: Category = {
-        id,
-        name: categoryElem.innerText || '',
-      };
-      return category;
-    })
-
+    const category: Category = {
+      id,
+      name: categoryElem.innerText || "",
+    };
+    return category;
+  });
 }

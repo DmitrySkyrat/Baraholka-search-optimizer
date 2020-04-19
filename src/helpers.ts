@@ -1,4 +1,4 @@
-import { BaraholkaTopic, Category } from "./models";
+import { BaraholkaTopic, Category, Region, City } from "./models";
 
 export function getTable(htmlElement: HTMLDivElement) {
   return htmlElement.querySelector<HTMLTableElement>(".ba-tbl-list__table");
@@ -54,6 +54,25 @@ export function tableRowsToTopics(
         }
         return parseFloat(primaryPrice.innerHTML.replace(/ +/g, ""));
       })(),
+      dolPrice: (() => {
+        const primaryPrice = item.querySelector(".price-primary");
+        if (!primaryPrice) {
+          return -1;
+        }
+        const dollarRateElem = document.querySelector("._u");
+        if (!dollarRateElem) {
+          return -1;
+        }
+        return Math.round(
+          parseFloat(primaryPrice.innerHTML.replace(/ +/g, "")) /
+            Number(
+              dollarRateElem.innerHTML
+                .replace(/ +/g, "")
+                .slice(1)
+                .replace(/,+/g, ".")
+            )
+        );
+      })(),
       city: (() => {
         const cityElement = item.querySelector(".ba-signature strong");
         return cityElement?.innerHTML || "";
@@ -79,6 +98,20 @@ export function priceFilter(
 
   return true;
 }
+//Filter Topic cities
+export function cityFilter(topicCity: string, selectedCities: City[]) {
+  if (selectedCities.length === 0) {
+    return true;
+  }
+  if (
+    selectedCities.length != 0 &&
+    selectedCities.map((city) => city.name).includes(topicCity)
+  ) {
+    return true;
+  }
+
+  return false;
+}
 //Parse categories
 export function parseCategories(categoriesBlock: Element) {
   const categoriesArray = Array.from(
@@ -94,4 +127,54 @@ export function parseCategories(categoriesBlock: Element) {
     };
     return category;
   });
+}
+//City filter
+export async function getCities(idNumber: string): Promise<City[]> {
+  const formData = new URLSearchParams();
+  formData.set("regionId", idNumber);
+  const url = new URL(location.href);
+  url.pathname = "getCities.php";
+  const response = await fetch(url.href, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      accept: "application/json, text/javascript, */*; q=0.01",
+      "x-requested-with": "XMLHttpRequest",
+    },
+    body: formData,
+  });
+  const respBody = await response.json();
+  return respBody.cities.map((citiesElem: any) => {
+    const city: City = {
+      name: citiesElem.name,
+      id: citiesElem.id,
+    };
+    return city;
+  });
+}
+export async function getRegions(): Promise<Region[]> {
+  const response = await fetch(
+    "https://baraholka.onliner.by/fleamarketposting.php"
+  );
+  const htmlPage = await response.text();
+  const el = getElemFromResponse(htmlPage);
+  const regionElements: NodeListOf<HTMLOptionElement> = el.querySelectorAll(
+    ".js-posting-region option"
+  );
+  return Array.from(regionElements).map((regionElem) => {
+    const region: Region = {
+      id: regionElem.value,
+      name: regionElem.innerText,
+    };
+    return region;
+  });
+}
+//Dollar conversion
+export function onDollar(topic: BaraholkaTopic) : BaraholkaTopic {
+  if (topic.dolPrice === -1) {
+    return topic;
+  }
+  const dollarTopic = topic;
+  dollarTopic.el.cells[1].firstElementChild && (dollarTopic.el.cells[1].firstElementChild.innerHTML = `$${topic.dolPrice}`);
+  return dollarTopic;
 }

@@ -1,5 +1,5 @@
 import './styles.scss';
-
+import 'vue-select/dist/vue-select.css';
 import Vue from 'vue';
 
 import App from './App.vue';

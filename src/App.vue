@@ -25,10 +25,13 @@
       color='#bada55'
       :loading="isLoading"
       :height="10"
-      :heightUnit="px"
+      :heightUnit="'px'"
       :width="831"
-      :widthUnit="px"
+      :widthUnit="'px'"
     ></BarLoader>
+         <tr v-if="!fullParsedArray.length && !isLoading">
+        No topic were found
+      </tr>
     </table>
   </div>
 </template>
@@ -66,6 +69,7 @@ export default class App extends Vue {
   minPrice = 0;
   maxPrice = 0;
   isLoading = false;
+  hasNextPage = true;
 
   mounted() {
     hideNativeTable();
@@ -84,7 +88,7 @@ export default class App extends Vue {
       const container = document.documentElement;
       if (
         container.scrollTop + container.clientHeight + 300 >=
-        container.scrollHeight
+        container.scrollHeight && this.hasNextPage
       ) {
         this.loadMore();
       }
@@ -105,12 +109,13 @@ export default class App extends Vue {
       category: this.baraholkaCategories[this.selectedCategoryIndex],
       pageNum: this.pageNum,
     });
-
+    
     const filteredTopics = newParsedArray.topics.filter((topic) =>
       priceFilter(topic.price, this.minPrice, this.maxPrice)
     );
     this.fullParsedArray.push(...filteredTopics);
     this.isLoading = false;
+    this.hasNextPage = newParsedArray.hasNextPage;
     this.pageNum++;
   }
 }

@@ -20,9 +20,15 @@
         v-bind:key="topic.id"
         v-bind:topic="topic"
       ></TableRow>
-      <tr v-show="isLoading">
-        Loading more...
-      </tr>
+          <BarLoader
+      class="custom-class"
+      color='#bada55'
+      :loading="isLoading"
+      :height="10"
+      :heightUnit="px"
+      :width="831"
+      :widthUnit="px"
+    ></BarLoader>
     </table>
   </div>
 </template>
@@ -30,6 +36,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import TableRow from "./components/TableRow.vue";
+import { BarLoader } from "@saeris/vue-spinners";
 import {
   getElemFromResponse,
   getTable,
@@ -47,6 +54,7 @@ import { baraholkaDataSource } from "./services/baraholka-data-source"
 @Component({
   components: {
     TableRow,
+    BarLoader,
   },
 })
 export default class App extends Vue {

@@ -25,9 +25,9 @@
       color='#bada55'
       :loading="isLoading"
       :height="10"
-      :heightUnit="px"
+      :heightUnit="'px'"
       :width="831"
-      :widthUnit="px"
+      :widthUnit="'px'"
     ></BarLoader>
     </table>
   </div>

@@ -1,5 +1,8 @@
-import Vue from "vue";
-import App from "./App.vue";
+import './styles.scss';
+
+import Vue from 'vue';
+
+import App from './App.vue';
 
 const nativeSearch = document.querySelector(".b-mnforum-search");
 nativeSearch?.setAttribute("hidden", "true");

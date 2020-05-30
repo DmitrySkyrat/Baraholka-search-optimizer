@@ -1,45 +1,30 @@
 <template>
   <div id="app">
-    <form @submit.prevent="onFormSubmit">
-      <input placeholder="Enter your search items" v-model="searchText" />
-      <input v-model="minPrice" placeholder="Enter min price" type="number" />
-      <input v-model="maxPrice" placeholder="Enter max price" type="number" />
-      <select v-model="selectedCategoryIndex">
-        <option
-          v-for="(category, index) in baraholkaCategories"
-          :key="category.id"
-          :value="index"
-          >{{ category.name }}</option
-        >
-      </select>
-      <input type="submit" value="SEARCH" />
-    </form>
+    <SearchItems @change="onSearchChange"></SearchItems>
     <table class="ba-tbl-list__table">
       <TableRow
-        v-for="topic in fullParsedArray"
+        v-for="topic in topics"
         v-bind:key="topic.id"
         v-bind:topic="topic"
       ></TableRow>
-          <BarLoader
-      class="custom-class"
-      color='#bada55'
-      :loading="isLoading"
-      :height="10"
-      :heightUnit="'px'"
-      :width="831"
-      :widthUnit="'px'"
-    ></BarLoader>
-         <tr v-if="!fullParsedArray.length && !isLoading">
-        No topic were found
+      <BarLoader
+        class="custom-class"
+        color="#bada55"
+        :loading="isLoading"
+        :height="10"
+        :heightUnit="'px'"
+        :width="831"
+        :widthUnit="'px'"
+      ></BarLoader>
+      <tr v-if="!topics.length && !isLoading">
+        No topics were found
       </tr>
     </table>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
-import TableRow from "./components/TableRow.vue";
-import { BarLoader } from "@saeris/vue-spinners";
+import { Component, Vue } from "vue-class-decorator";
 import {
   getElemFromResponse,
   getTable,
@@ -49,38 +34,32 @@ import {
   hideNativePagination,
   tableRowsToTopics,
   priceFilter,
-  parseCategories,
+  cityFilter,
 } from "./helpers";
-import { BaraholkaTopic, Category } from "./models";
-import { baraholkaDataSource } from "./services/baraholka-data-source"
+import TableRow from "./components/TableRow.vue";
+import SearchItems from "./components/SearchItems.vue";
+import { BarLoader } from "@saeris/vue-spinners";
+import { BaraholkaTopic, Category, City, SearchParams } from "./models";
+import { baraholkaDataSource } from "./services/baraholka-data-source";
 
 @Component({
   components: {
     TableRow,
     BarLoader,
+    SearchItems,
   },
 })
 export default class App extends Vue {
-  searchText = "";
-  fullParsedArray: BaraholkaTopic[] = [];
-  baraholkaCategories: Category[] = [];
-  selectedCategoryIndex = 1;
   pageNum = 0;
-  minPrice = 0;
-  maxPrice = 0;
   isLoading = false;
   hasNextPage = true;
+  topics: BaraholkaTopic[] = [];
+  searchParams!: SearchParams;
 
   mounted() {
     hideNativeTable();
     hideNativePagination();
-    const categoriesBlock = document.querySelector(".b-ba-tabs");
-    if (!categoriesBlock) {
-      return;
-    }
-    this.baraholkaCategories.push(...parseCategories(categoriesBlock));
     //Infinite topic scroll
-    this.loadMore();
     document.addEventListener("scroll", (e) => {
       if (this.isLoading) {
         return;
@@ -88,35 +67,47 @@ export default class App extends Vue {
       const container = document.documentElement;
       if (
         container.scrollTop + container.clientHeight + 300 >=
-        container.scrollHeight && this.hasNextPage
+          container.scrollHeight &&
+        this.hasNextPage
       ) {
         this.loadMore();
       }
     });
   }
 
-  async onFormSubmit() {
-    this.fullParsedArray.splice(0);
+  onSearchChange(searchData: SearchParams) {
+    this.topics.splice(0);
+    this.searchParams = searchData;
     this.pageNum = 0;
     this.loadMore();
   }
 
   async loadMore() {
+    if (!this.searchParams) {
+      return;
+    }
     this.isLoading = true;
 
     const newParsedArray = await baraholkaDataSource.getTopics({
-      searchText: this.searchText,
-      category: this.baraholkaCategories[this.selectedCategoryIndex],
-      pageNum: this.pageNum,
+      searchText: this.searchParams.searchText,
+      category: this.searchParams.selectedCategory,
+      pageNum: this.pageNum++,
     });
-    
-    const filteredTopics = newParsedArray.topics.filter((topic) =>
-      priceFilter(topic.price, this.minPrice, this.maxPrice)
-    );
-    this.fullParsedArray.push(...filteredTopics);
+    console.log(this.pageNum);
+    const filteredTopics = newParsedArray.topics
+      .filter((topic) =>
+        priceFilter(
+          topic.price,
+          this.searchParams.minPrice,
+          this.searchParams.maxPrice
+        )
+      )
+      .filter((topic) =>
+        cityFilter(topic.city, this.searchParams.selectedCities)
+      );
+    this.topics.push(...filteredTopics);
     this.isLoading = false;
     this.hasNextPage = newParsedArray.hasNextPage;
-    this.pageNum++;
   }
 }
 </script>

@@ -13,3 +13,18 @@ export interface BaraholkaSearchParams {
   category: Category;
   pageNum: number;
 }
+export interface Region {
+  name: string;
+  id: string;
+}
+export interface City {
+  name: string;
+  id: string;
+}
+export interface SearchParams {
+  searchText: string;
+  minPrice: number;
+  maxPrice: number;
+  selectedCategory: Category;
+  selectedCities: City[];
+}

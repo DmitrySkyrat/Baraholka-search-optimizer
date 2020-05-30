@@ -1,4 +1,4 @@
-import { BaraholkaTopic, Category } from "./models";
+import { BaraholkaTopic, Category, City } from "./models";
 
 export function getTable(htmlElement: HTMLDivElement) {
   return htmlElement.querySelector<HTMLTableElement>(".ba-tbl-list__table");
@@ -79,6 +79,17 @@ export function priceFilter(
 
   return true;
 }
+//Filter Topic cities
+export function cityFilter(topicCity: string, selectedCities: City[]) {
+  if (
+    selectedCities.length === 0 ||
+    (selectedCities.length != 0 &&
+      selectedCities.find((city) => city.name === topicCity))
+  ) {
+    return true;
+  }
+  return false;
+}
 //Parse categories
 export function parseCategories(categoriesBlock: Element) {
   const categoriesArray = Array.from(
@@ -95,3 +106,4 @@ export function parseCategories(categoriesBlock: Element) {
     return category;
   });
 }
+

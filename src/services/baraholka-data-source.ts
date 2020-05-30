@@ -14,8 +14,10 @@ class BaraholkaDataSource {
     params: BaraholkaSearchParams
   ): Promise<{ topics: BaraholkaTopic[]; hasNextPage: boolean }> {
     const url = new URL(location.href);
-    url.pathname = "search.php";
-    url.searchParams.set("q", params.searchText);
+    if (params.searchText) {
+      url.pathname = "search.php";
+      url.searchParams.set("q", params.searchText);
+    }
     url.searchParams.set("cat", params.category.id);
     url.searchParams.set("start", `${50 * params.pageNum}`);
     const response = await fetch(url.href);

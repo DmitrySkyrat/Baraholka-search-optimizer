@@ -6,6 +6,7 @@
         v-for="topic in topics"
         v-bind:key="topic.id"
         v-bind:topic="topic"
+        :currencies="currencies"
       ></TableRow>
       <BarLoader
         class="custom-class"
@@ -41,6 +42,7 @@ import SearchItems from './components/SearchItems.vue';
 import { BarLoader } from '@saeris/vue-spinners';
 import { BaraholkaTopic, Category, City, SearchParams } from './models';
 import { baraholkaDataSource } from './services/baraholka-data-source';
+import { CurrencyMap, currencyService } from './services/currency.service';
 
 @Component({
   components: {
@@ -50,6 +52,7 @@ import { baraholkaDataSource } from './services/baraholka-data-source';
   },
 })
 export default class App extends Vue {
+  currencies: CurrencyMap = {};
   pageNum = 0;
   isLoading = false;
   hasNextPage = true;
@@ -59,17 +62,19 @@ export default class App extends Vue {
   mounted() {
     hideNativeTable();
     hideNativePagination();
+    this.loadCurrencies();
+
     //Infinite topic scroll
-    document.addEventListener('scroll', (e) => {
+    document.addEventListener('scroll', () => {
       if (this.isLoading) {
         return;
       }
       const container = document.documentElement;
-      if (
+      const scrollIsAtTheBottom =
         container.scrollTop + container.clientHeight + 300 >=
-          container.scrollHeight &&
-        this.hasNextPage
-      ) {
+        container.scrollHeight;
+
+      if (scrollIsAtTheBottom && this.hasNextPage) {
         this.loadMore();
       }
     });
@@ -109,6 +114,13 @@ export default class App extends Vue {
     this.topics.push(...filteredTopics);
     this.isLoading = false;
     this.hasNextPage = newParsedArray.hasNextPage;
+    if (this.hasNextPage && this.topics.length < 15) {
+      await this.loadMore();
+    }
+  }
+
+  async loadCurrencies() {
+    this.currencies = await currencyService.fetchCurrencies();
   }
 }
 </script>

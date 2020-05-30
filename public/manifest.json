@@ -3,7 +3,7 @@
 
   "name": "Baraholka search optimizer",
   "description": "Позволяет применять филтр по цене на сайте Барахолки baraholka.onliner.by",
-  "version": "2.1",
+  "version": "2.4",
 
   "content_scripts": [
     {

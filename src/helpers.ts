@@ -1,4 +1,4 @@
-import { BaraholkaTopic, Category, City } from "./models";
+import { BaraholkaTopic, Category, Region, City } from "./models";
 
 export function getTable(htmlElement: HTMLDivElement) {
   return htmlElement.querySelector<HTMLTableElement>(".ba-tbl-list__table");
@@ -54,6 +54,25 @@ export function tableRowsToTopics(
         }
         return parseFloat(primaryPrice.innerHTML.replace(/ +/g, ""));
       })(),
+      dolPrice: (() => {
+        const primaryPrice = item.querySelector(".price-primary");
+        if (!primaryPrice) {
+          return -1;
+        }
+        const dollarRateElem = document.querySelector("._u");
+        if (!dollarRateElem) {
+          return -1;
+        }
+        return Math.round(
+          parseFloat(primaryPrice.innerHTML.replace(/ +/g, "")) /
+          Number(
+            dollarRateElem.innerHTML
+              .replace(/ +/g, "")
+              .slice(1)
+              .replace(/,+/g, ".")
+          )
+        );
+      })(),
       city: (() => {
         const cityElement = item.querySelector(".ba-signature strong");
         return cityElement?.innerHTML || "";
@@ -81,13 +100,17 @@ export function priceFilter(
 }
 //Filter Topic cities
 export function cityFilter(topicCity: string, selectedCities: City[]) {
+  if (!selectedCities.length) {
+    return true;
+  }
+
   if (
-    selectedCities.length === 0 ||
-    (selectedCities.length != 0 &&
-      selectedCities.find((city) => city.name === topicCity))
+    selectedCities.length != 0 &&
+    selectedCities.map((city) => city.name).includes(topicCity)
   ) {
     return true;
   }
+
   return false;
 }
 //Parse categories
@@ -106,4 +129,3 @@ export function parseCategories(categoriesBlock: Element) {
     return category;
   });
 }
-

@@ -9,6 +9,7 @@ import {
 import { BaraholkaTopic, BaraholkaSearchParams, Region, City } from "../models";
 
 class BaraholkaDataSource {
+
   async getTopics(
     params: BaraholkaSearchParams
   ): Promise<{ topics: BaraholkaTopic[]; hasNextPage: boolean }> {
@@ -32,6 +33,7 @@ class BaraholkaDataSource {
       hasNextPage: nextPagePresenceValue
     };
   }
+
   async  getCities(idNumber: string): Promise<City[]> {
     const formData = new URLSearchParams();
     formData.set("regionId", idNumber);
@@ -55,7 +57,8 @@ class BaraholkaDataSource {
       return city;
     });
   }
-   async  getRegions(): Promise<Region[]> {
+
+  async  getRegions(): Promise<Region[]> {
     const response = await fetch(
       "https://baraholka.onliner.by/fleamarketposting.php"
     );

@@ -1,6 +1,10 @@
 <template>
   <form @submit.prevent="onFormSubmit" class="form">
-    <input placeholder="ВВЕДИТЕ НАЗВАНИЕ ТОВАРА" v-model="searchText" class="search-style" />
+    <input
+      placeholder="ВВЕДИТЕ НАЗВАНИЕ ТОВАРА"
+      v-model="searchText"
+      class="search-style"
+    />
     <select v-model="selectedCategoryIndex" class="category-style">
       <option
         v-for="(category, index) in baraholkaCategories"
@@ -17,24 +21,34 @@
       v-model="selectedCities"
       multiple
     ></v-select>
-    <input v-model="minPrice" placeholder="МИНИМАЛЬНАЯ ЦЕНА" type="number" class="min-style" />
-    <input v-model="maxPrice" placeholder="МАКСИМАЛЬНАЯ ЦЕНА" type="number" class="max-style" />
+    <input
+      v-model="minPrice"
+      placeholder="МИНИМАЛЬНАЯ ЦЕНА"
+      type="number"
+      class="min-style"
+    />
+    <input
+      v-model="maxPrice"
+      placeholder="МАКСИМАЛЬНАЯ ЦЕНА"
+      type="number"
+      class="max-style"
+    />
     <button class="submit-style">ПОИСК</button>
   </form>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Mounted } from "vue-class-decorator";
-import vSelect from "vue-select";
-import { parseCategories } from "../helpers";
-import { BaraholkaTopic, Category, City } from "../models";
-import { baraholkaDataSource } from "../services/baraholka-data-source";
+import { Component, Vue, Prop, Mounted } from 'vue-class-decorator';
+import vSelect from 'vue-select';
+import { parseCategories } from '../helpers';
+import { BaraholkaTopic, Category, City } from '../models';
+import { baraholkaDataSource } from '../services/baraholka-data-source';
 
-Vue.component("v-select", vSelect);
+Vue.component('v-select', vSelect);
 
 @Component({})
 export default class Params extends Vue {
-  searchText = "";
+  searchText = '';
   minPrice = 0;
   maxPrice = 0;
   selectedCategoryIndex = 0;
@@ -56,7 +70,7 @@ export default class Params extends Vue {
 
   @Mounted()
   getCategories() {
-    const categoriesBlock = document.querySelector(".b-ba-tabs");
+    const categoriesBlock = document.querySelector('.b-ba-tabs');
     if (!categoriesBlock) {
       return;
     }
@@ -72,7 +86,7 @@ export default class Params extends Vue {
       selectedCities: this.selectedCities,
       selectedCategory: this.baraholkaCategories[this.selectedCategoryIndex],
     };
-    this.$emit("change", searchData);
+    this.$emit('change', searchData);
   }
 }
 </script>

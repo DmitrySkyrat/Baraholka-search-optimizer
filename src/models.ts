@@ -1,6 +1,7 @@
 export interface BaraholkaTopic {
   id: string | null;
   price: number;
+  dolPrice: number;
   city: string;
   el: HTMLTableRowElement;
 }

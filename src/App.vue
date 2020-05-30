@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-class-decorator";
+import { Component, Vue } from 'vue-class-decorator';
 import {
   getElemFromResponse,
   getTable,
@@ -35,12 +35,12 @@ import {
   tableRowsToTopics,
   priceFilter,
   cityFilter,
-} from "./helpers";
-import TableRow from "./components/TableRow.vue";
-import SearchItems from "./components/SearchItems.vue";
-import { BarLoader } from "@saeris/vue-spinners";
-import { BaraholkaTopic, Category, City, SearchParams } from "./models";
-import { baraholkaDataSource } from "./services/baraholka-data-source";
+} from './helpers';
+import TableRow from './components/TableRow.vue';
+import SearchItems from './components/SearchItems.vue';
+import { BarLoader } from '@saeris/vue-spinners';
+import { BaraholkaTopic, Category, City, SearchParams } from './models';
+import { baraholkaDataSource } from './services/baraholka-data-source';
 
 @Component({
   components: {
@@ -60,7 +60,7 @@ export default class App extends Vue {
     hideNativeTable();
     hideNativePagination();
     //Infinite topic scroll
-    document.addEventListener("scroll", (e) => {
+    document.addEventListener('scroll', (e) => {
       if (this.isLoading) {
         return;
       }
@@ -93,7 +93,7 @@ export default class App extends Vue {
       category: this.searchParams.selectedCategory,
       pageNum: this.pageNum++,
     });
-    console.log(this.pageNum);
+
     const filteredTopics = newParsedArray.topics
       .filter((topic) =>
         priceFilter(
@@ -105,6 +105,7 @@ export default class App extends Vue {
       .filter((topic) =>
         cityFilter(topic.city, this.searchParams.selectedCities)
       );
+
     this.topics.push(...filteredTopics);
     this.isLoading = false;
     this.hasNextPage = newParsedArray.hasNextPage;
